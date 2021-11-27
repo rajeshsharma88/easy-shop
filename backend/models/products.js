@@ -30,16 +30,20 @@ const productSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
-  price: {
+  category: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Category",
     required: true,
   },
-  countnStock: {
+  countInStock: {
     type: Number,
     required: true,
     min: 0,
     max: 255,
+  },
+  rating: {
+    type: Number,
+    default: 0,
   },
   numReviews: {
     type: Number,
