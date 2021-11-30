@@ -3,9 +3,14 @@ const express = require("express");
 const { Category } = require("../models/category");
 const router = express.Router();
 const mongoose = require("mongoose");
+const { query } = require("express");
 
 router.get(`/`, async (req, res) => {
-  const productList = await Product.find();
+  let filter = {};
+  if (req.query.categories) {
+    filter = { category: req.query.categories.split(",") };
+  }
+  const productList = await Product.find().populate("category");
   if (!productList) {
     res.status(500).json({ succes: false });
   }
@@ -13,7 +18,7 @@ router.get(`/`, async (req, res) => {
   res.send(productList);
 });
 router.get(`/:id`, async (req, res) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate("category");
   if (!product) {
     res.status(500).json({ succes: false });
   }
@@ -97,6 +102,28 @@ router.delete("/:id", (req, res) => {
         error: err,
       });
     });
+});
+
+router.get(`/get/count`, async (req, res) => {
+  const productCount = await Product.countDocuments();
+  if (!productCount) {
+    res.status(500).json({ succes: false });
+  }
+
+  res.send({
+    count: productCount,
+  });
+});
+router.get(`/get/featured/:count`, async (req, res) => {
+  const count = req.params.count ? req.params.count : 0;
+  const products = await Product.find({
+    isFeatured: true,
+  }).limit(+count);
+  if (!products) {
+    res.status(500).json({ succes: false });
+  }
+
+  res.send(products);
 });
 
 module.exports = router;
