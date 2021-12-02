@@ -11,7 +11,7 @@ app.options("*", cors());
 
 app.use(express.json());
 app.use(morgan("tiny"));
-app.use(authJwt());
+// app.use(authJwt());
 app.use(errorHandler);
 
 const categoriesRoutes = require("./routes/categories");
